@@ -28,7 +28,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 
 		workingData=null;
 		dataBars = new ArrayList<Rectangle2D.Double>();
-		data = new double[100];
+		data = new double[400];
 		for(int x  = 0; x < data.length; x++){
 			data[x]=Math.random();
 		}
@@ -43,7 +43,12 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 	@Override
 	public void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D)g;
-		g2d.setColor(Color.black);
+		if(complete){
+			g2d.setColor(Color.green);
+		}
+		else{
+			g2d.setColor(Color.white);
+		}
 		g2d.fill(new Rectangle2D.Double(0,0,800,800));
 		
 
@@ -52,11 +57,8 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			if(sortIndex==x){
 				g2d.setColor(Color.red);
 			}
-			else if(complete){
-				g2d.setColor(Color.green);
-			}
 			else{
-				g2d.setColor(Color.white);
+				g2d.setColor(Color.black);
 			}
 			g2d.fill(dataBars.get(x));
 		}
@@ -87,11 +89,17 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			sortIndex++;
 		}
 		sortIndex=0;
+
+		//every data point for sortData should correspond to dataBars throughout the sort
+		shakerSort();
+
+	}
+	
+	public void bubbleSort(){
 		ArrayList<java.lang.Double> sortData = new ArrayList<java.lang.Double>();
 		for(int x = 0; x < data.length; x++){
 			sortData.add(new java.lang.Double(data[x]));
 		}
-		//every data point for sortData should correspond to dataBars throughout the sort
 		complete = false;
 		boolean swapped = true;
 		int sorted = sortData.size()-1;
@@ -125,10 +133,73 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		}
 		complete = true;
 		repaint();
-
 	}
 	
-
+	public void shakerSort(){
+		ArrayList<java.lang.Double> sortData = new ArrayList<java.lang.Double>();
+		for(int x = 0; x < data.length; x++){
+			sortData.add(new java.lang.Double(data[x]));
+		}
+		complete = false;
+		boolean swapped = true;
+		int sortedright = sortData.size()-1;
+		int sortedleft = 0;
+		while(swapped){
+			swapped=false;
+			for(sortIndex=sortedleft;sortIndex < sortedright; sortIndex++){
+				if(sortData.get(sortIndex).doubleValue()>sortData.get(sortIndex+1).doubleValue()){
+					swapped=true;
+					//data sorts
+					java.lang.Double temp = sortData.get(sortIndex);
+					sortData.set(sortIndex, sortData.get(sortIndex+1));
+					sortData.set(sortIndex+1, temp);
+					//bars sort
+					double xtemp = dataBars.get(sortIndex+1).getX();
+					double heighttemp = dataBars.get(sortIndex).getHeight();
+					dataBars.set(sortIndex, new Rectangle2D.Double(dataBars.get(sortIndex).getX(),0,800.0/data.length,dataBars.get(sortIndex+1).getHeight()));
+					dataBars.set(sortIndex+1, new Rectangle2D.Double(xtemp,0,800.0/data.length,heighttemp));
+					
+				}
+				else if((sortData.get(sortIndex).doubleValue()<sortData.get(sortIndex+1).doubleValue()) && sortIndex+1==sortedright){
+					sortedright=sortIndex;
+				}
+				repaint();
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			for(sortIndex = sortedright;sortIndex > sortedleft; sortIndex--){
+				if(sortData.get(sortIndex).doubleValue()<sortData.get(sortIndex-1).doubleValue()){
+					swapped=true;
+					//data sorts
+					java.lang.Double temp = sortData.get(sortIndex);
+					sortData.set(sortIndex, sortData.get(sortIndex-1));
+					sortData.set(sortIndex-1, temp);
+					//bars sort
+					double xtemp = dataBars.get(sortIndex-1).getX();
+					double heighttemp = dataBars.get(sortIndex).getHeight();
+					dataBars.set(sortIndex, new Rectangle2D.Double(dataBars.get(sortIndex).getX(),0,800.0/data.length,dataBars.get(sortIndex-1).getHeight()));
+					dataBars.set(sortIndex-1, new Rectangle2D.Double(xtemp,0,800.0/data.length,heighttemp));
+					
+				}
+				else if((sortData.get(sortIndex).doubleValue()>sortData.get(sortIndex-1).doubleValue()) && sortIndex-1==sortedleft){
+					sortedleft=sortIndex;
+				}
+				repaint();
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		complete = true;
+		repaint();
+	}
 
 	public static void main(String[] args) {
 		VisualSort go = new VisualSort();
