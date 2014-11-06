@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
@@ -28,7 +29,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 
 		workingData=null;
 		dataBars = new ArrayList<Rectangle2D.Double>();
-		data = new double[400];
+		data = new double[200];
 		for(int x  = 0; x < data.length; x++){
 			data[x]=Math.random();
 		}
@@ -91,8 +92,41 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		sortIndex=0;
 
 		//every data point for sortData should correspond to dataBars throughout the sort
-		shakerSort();
+		selectionSort();
 
+	}
+	
+	public void selectionSort(){
+		ArrayList<java.lang.Double> sortData = new ArrayList<java.lang.Double>();
+		for(int x = 0; x < data.length; x++){
+			sortData.add(new java.lang.Double(data[x]));
+		}
+		complete = false;
+		int smallestIndex=0;
+		int endOfSort=0;
+		while(endOfSort<sortData.size()){
+			
+			for(sortIndex= endOfSort; sortIndex< sortData.size(); sortIndex++){
+				if(sortData.get(sortIndex).compareTo(sortData.get(smallestIndex))<0){
+					smallestIndex=sortIndex;
+				}
+			}
+			java.lang.Double smallest = new java.lang.Double(sortData.get(smallestIndex));
+			sortData.remove(smallestIndex);
+			sortData.add(endOfSort, smallest);
+			
+			Rectangle2D.Double smallestBar = new Rectangle2D.Double(dataBars.get(endOfSort).getX(),0,800.0/data.length, dataBars.get(smallestIndex).getHeight());
+			dataBars.remove(smallestIndex);
+			dataBars.add(endOfSort, smallestBar);
+			
+			for(int i = endOfSort+1; i< smallestIndex; i++){
+				Rectangle2D.Double toMove = dataBars.get(i);
+				dataBars.set(i, new Rectangle2D.Double(toMove.getX()+800.0/data.length,0,800.0/data.length,toMove.getHeight()));
+			}
+			repaint();
+			
+			endOfSort++;
+		}
 	}
 	
 	public void bubbleSort(){
