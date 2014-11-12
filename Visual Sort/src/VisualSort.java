@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -84,10 +85,53 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			i++;
 		}
 
-		selectionSort();
+		quickSort();
+		//selectionSort();
 		//bubbleSort();
 		//shakerSort();
 
+	}
+	
+	public void quickSort(){
+		ArrayList<java.lang.Double> sortData = new ArrayList<java.lang.Double>();
+		for(int x = 0; x < data.length; x++){
+			sortData.add(new java.lang.Double(data[x]));
+		}
+		complete = false;
+		int pivotIndex=sortData.size()-1;
+		java.lang.Double pivot = sortData.get(pivotIndex);
+		/*
+		 * move pivot to a point where values below it are < it and values above it are > than it.
+		 * Do this by moving the pivot towards the middle by one index and swapping the first term
+		 * before the pivot that is greater than it with the term that now occupies the spot where
+		 * the pivot just was.  
+		 */
+		boolean swapped=true;
+		while(swapped){
+			swapped=false;
+			for (int i = 0; i < pivotIndex; i++) {
+				if(sortData.get(i).compareTo(sortData.get(pivotIndex))>0){
+					sortData.set(pivotIndex, sortData.get(pivotIndex-1));
+					sortData.set(pivotIndex-1, pivot);
+					java.lang.Double temp = sortData.get(pivotIndex);
+					sortData.set(pivotIndex, sortData.get(i));
+					sortData.set(i, temp);
+					pivotIndex--;
+					swapped=true;
+					break;
+				}
+			}
+			for(int x = 0; x < sortData.size(); x++){
+				dataBars.get(x).setRect(x*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(x));
+			}
+			repaint();
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void selectionSort(){
