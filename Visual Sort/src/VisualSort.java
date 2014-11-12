@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 public class VisualSort extends JPanel implements ActionListener,Runnable {
 	
 	public static double[] data;
-	public static int sortIndex;
 	static ArrayList<Rectangle2D.Double> dataBars;
 	Rectangle2D.Double workingData;
 	public boolean complete = false;
@@ -29,11 +28,10 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 
 		workingData=null;
 		dataBars = new ArrayList<Rectangle2D.Double>();
-		data = new double[200];
+		data = new double[10000];
 		for(int x  = 0; x < data.length; x++){
 			data[x]=Math.random();
 		}
-		sortIndex=0;
 		
 		repaint();
 		frame.revalidate();
@@ -55,12 +53,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 
 
 		for(int x = 0; x < dataBars.size(); x++){
-			if(sortIndex==x){
-				g2d.setColor(Color.red);
-			}
-			else{
-				g2d.setColor(Color.black);
-			}
+			g2d.setColor(Color.black);
 			g2d.fill(dataBars.get(x));
 		}
 
@@ -78,21 +71,22 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 	@Override
 	public void run() {
 		//paint original data
-		while(sortIndex<data.length){
-			dataBars.add(new Rectangle2D.Double(sortIndex*(800.0/data.length), 0, 800.0/data.length, 800.0*data[sortIndex]));
+		int i = 0;
+		while(i<data.length){
+			dataBars.add(new Rectangle2D.Double(i*(800.0/data.length), 0, 800.0/data.length, 800.0*data[i]));
 			repaint();
 			try {
-				Thread.sleep(5);
+				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			sortIndex++;
+			i++;
 		}
-		sortIndex=0;
 
-		//every data point for sortData should correspond to dataBars throughout the sort
 		selectionSort();
+		//bubbleSort();
+		//shakerSort();
 
 	}
 	
@@ -105,11 +99,12 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		int smallestIndex=0;
 		int endOfSort=0;
 		while(endOfSort<sortData.size()){
-			
-			for(sortIndex= endOfSort; sortIndex< sortData.size(); sortIndex++){
-				if(sortData.get(sortIndex).compareTo(sortData.get(smallestIndex))<0){
-					smallestIndex=sortIndex;
+			smallestIndex=endOfSort;
+			for(int i = endOfSort; i< sortData.size(); i++){
+				if(sortData.get(i).compareTo(sortData.get(smallestIndex))<0){
+					smallestIndex=i;
 				}
+
 			}
 			java.lang.Double smallest = new java.lang.Double(sortData.get(smallestIndex));
 			sortData.remove(smallestIndex);
@@ -119,14 +114,20 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			dataBars.remove(smallestIndex);
 			dataBars.add(endOfSort, smallestBar);
 			
-			for(int i = endOfSort+1; i< smallestIndex; i++){
-				Rectangle2D.Double toMove = dataBars.get(i);
-				dataBars.set(i, new Rectangle2D.Double(toMove.getX()+800.0/data.length,0,800.0/data.length,toMove.getHeight()));
+			for(int i = 0; i < sortData.size(); i++){
+				dataBars.get(i).setRect(i*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(i));
 			}
 			repaint();
-			
-			endOfSort++;
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		endOfSort++;
 		}
+		complete=true;
+		repaint();
 	}
 	
 	public void bubbleSort(){
@@ -139,30 +140,31 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		int sorted = sortData.size()-1;
 		while(swapped){
 			swapped=false;
-			for(sortIndex=0;sortIndex < sorted; sortIndex++){
-				if(sortData.get(sortIndex).doubleValue()>sortData.get(sortIndex+1).doubleValue()){
+			for(int i = 0;i < sorted; i++){
+				if(sortData.get(i).doubleValue()>sortData.get(i+1).doubleValue()){
 					swapped=true;
 					//data sorts
-					java.lang.Double temp = sortData.get(sortIndex);
-					sortData.set(sortIndex, sortData.get(sortIndex+1));
-					sortData.set(sortIndex+1, temp);
+					java.lang.Double temp = sortData.get(i);
+					sortData.set(i, sortData.get(i+1));
+					sortData.set(i+1, temp);
 					//bars sort
-					double xtemp = dataBars.get(sortIndex+1).getX();
-					double heighttemp = dataBars.get(sortIndex).getHeight();
-					dataBars.set(sortIndex, new Rectangle2D.Double(dataBars.get(sortIndex).getX(),0,800.0/data.length,dataBars.get(sortIndex+1).getHeight()));
-					dataBars.set(sortIndex+1, new Rectangle2D.Double(xtemp,0,800.0/data.length,heighttemp));
+					double xtemp = dataBars.get(i+1).getX();
+					double heighttemp = dataBars.get(i).getHeight();
+					dataBars.set(i, new Rectangle2D.Double(dataBars.get(i).getX(),0,800.0/data.length,dataBars.get(i+1).getHeight()));
+					dataBars.set(i+1, new Rectangle2D.Double(xtemp,0,800.0/data.length,heighttemp));
 					
 				}
-				else if((sortData.get(sortIndex).doubleValue()<sortData.get(sortIndex+1).doubleValue()) && sortIndex+1==sorted){
-					sorted=sortIndex;
+				else if((sortData.get(i).doubleValue()<sortData.get(i+1).doubleValue()) && i+1==sorted){
+					sorted=i;
 				}
-				repaint();
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+			}
+			repaint();
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		complete = true;
@@ -180,55 +182,55 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		int sortedleft = 0;
 		while(swapped){
 			swapped=false;
-			for(sortIndex=sortedleft;sortIndex < sortedright; sortIndex++){
-				if(sortData.get(sortIndex).doubleValue()>sortData.get(sortIndex+1).doubleValue()){
+			for(int i =sortedleft;i < sortedright; i++){
+				if(sortData.get(i).doubleValue()>sortData.get(i+1).doubleValue()){
 					swapped=true;
 					//data sorts
-					java.lang.Double temp = sortData.get(sortIndex);
-					sortData.set(sortIndex, sortData.get(sortIndex+1));
-					sortData.set(sortIndex+1, temp);
+					java.lang.Double temp = sortData.get(i);
+					sortData.set(i, sortData.get(i+1));
+					sortData.set(i+1, temp);
 					//bars sort
-					double xtemp = dataBars.get(sortIndex+1).getX();
-					double heighttemp = dataBars.get(sortIndex).getHeight();
-					dataBars.set(sortIndex, new Rectangle2D.Double(dataBars.get(sortIndex).getX(),0,800.0/data.length,dataBars.get(sortIndex+1).getHeight()));
-					dataBars.set(sortIndex+1, new Rectangle2D.Double(xtemp,0,800.0/data.length,heighttemp));
+					double xtemp = dataBars.get(i+1).getX();
+					double heighttemp = dataBars.get(i).getHeight();
+					dataBars.set(i, new Rectangle2D.Double(dataBars.get(i).getX(),0,800.0/data.length,dataBars.get(i+1).getHeight()));
+					dataBars.set(i+1, new Rectangle2D.Double(xtemp,0,800.0/data.length,heighttemp));
 					
 				}
-				else if((sortData.get(sortIndex).doubleValue()<sortData.get(sortIndex+1).doubleValue()) && sortIndex+1==sortedright){
-					sortedright=sortIndex;
-				}
-				repaint();
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				else if((sortData.get(i).doubleValue()<sortData.get(i+1).doubleValue()) && i+1==sortedright){
+					sortedright=i;
 				}
 			}
-			for(sortIndex = sortedright;sortIndex > sortedleft; sortIndex--){
-				if(sortData.get(sortIndex).doubleValue()<sortData.get(sortIndex-1).doubleValue()){
+			repaint();
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			for(int i = sortedright;i > sortedleft; i--){
+				if(sortData.get(i).doubleValue()<sortData.get(i-1).doubleValue()){
 					swapped=true;
 					//data sorts
-					java.lang.Double temp = sortData.get(sortIndex);
-					sortData.set(sortIndex, sortData.get(sortIndex-1));
-					sortData.set(sortIndex-1, temp);
+					java.lang.Double temp = sortData.get(i);
+					sortData.set(i, sortData.get(i-1));
+					sortData.set(i-1, temp);
 					//bars sort
-					double xtemp = dataBars.get(sortIndex-1).getX();
-					double heighttemp = dataBars.get(sortIndex).getHeight();
-					dataBars.set(sortIndex, new Rectangle2D.Double(dataBars.get(sortIndex).getX(),0,800.0/data.length,dataBars.get(sortIndex-1).getHeight()));
-					dataBars.set(sortIndex-1, new Rectangle2D.Double(xtemp,0,800.0/data.length,heighttemp));
+					double xtemp = dataBars.get(i-1).getX();
+					double heighttemp = dataBars.get(i).getHeight();
+					dataBars.set(i, new Rectangle2D.Double(dataBars.get(i).getX(),0,800.0/data.length,dataBars.get(i-1).getHeight()));
+					dataBars.set(i-1, new Rectangle2D.Double(xtemp,0,800.0/data.length,heighttemp));
 					
 				}
-				else if((sortData.get(sortIndex).doubleValue()>sortData.get(sortIndex-1).doubleValue()) && sortIndex-1==sortedleft){
-					sortedleft=sortIndex;
+				else if((sortData.get(i).doubleValue()>sortData.get(i-1).doubleValue()) && i-1==sortedleft){
+					sortedleft=i;
 				}
-				repaint();
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			}
+			repaint();
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		complete = true;
