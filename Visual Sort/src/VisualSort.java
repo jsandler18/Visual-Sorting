@@ -85,18 +85,20 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			i++;
 		}
 
-		quickSort();
-		//selectionSort();
-		//bubbleSort();
-		//shakerSort();
-
-	}
-	
-	public void quickSort(){
 		ArrayList<java.lang.Double> sortData = new ArrayList<java.lang.Double>();
 		for(int x = 0; x < data.length; x++){
 			sortData.add(new java.lang.Double(data[x]));
 		}
+		
+		quickSort(sortData);
+		//selectionSort(sortData);
+		//bubbleSort(sortData);
+		//shakerSort(sortData);
+
+	}
+	
+	public void quickSort(ArrayList<java.lang.Double> sortData){
+
 		complete = false;
 		int pivotIndex=sortData.size()-1;
 		java.lang.Double pivot = sortData.get(pivotIndex);
@@ -134,11 +136,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		}
 	}
 	
-	public void selectionSort(){
-		ArrayList<java.lang.Double> sortData = new ArrayList<java.lang.Double>();
-		for(int x = 0; x < data.length; x++){
-			sortData.add(new java.lang.Double(data[x]));
-		}
+	public void selectionSort(ArrayList<java.lang.Double> sortData){
 		complete = false;
 		int smallestIndex=0;
 		int endOfSort=0;
@@ -174,11 +172,8 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		repaint();
 	}
 	
-	public void bubbleSort(){
-		ArrayList<java.lang.Double> sortData = new ArrayList<java.lang.Double>();
-		for(int x = 0; x < data.length; x++){
-			sortData.add(new java.lang.Double(data[x]));
-		}
+	public void bubbleSort(ArrayList<java.lang.Double> sortData){
+
 		complete = false;
 		boolean swapped = true;
 		int sorted = sortData.size()-1;
@@ -215,11 +210,8 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		repaint();
 	}
 	
-	public void shakerSort(){
-		ArrayList<java.lang.Double> sortData = new ArrayList<java.lang.Double>();
-		for(int x = 0; x < data.length; x++){
-			sortData.add(new java.lang.Double(data[x]));
-		}
+	public void shakerSort(ArrayList<java.lang.Double> sortData){
+
 		complete = false;
 		boolean swapped = true;
 		int sortedright = sortData.size()-1;
