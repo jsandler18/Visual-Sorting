@@ -19,7 +19,8 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 	static ArrayList<Rectangle2D.Double> dataBars;
 	Rectangle2D.Double workingData;
 	public boolean complete = false;
-	public int sleepTime = 1;
+	public int sleepTime = 0;
+	public int dataSize = 100000;
 	
 	
 	public VisualSort() {
@@ -31,7 +32,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 
 		workingData=null;
 		dataBars = new ArrayList<Rectangle2D.Double>();
-		data = new double[10000];
+		data = new double[dataSize];
 		for(int x  = 0; x < data.length; x++){
 			data[x]=Math.random();
 		}
@@ -92,10 +93,13 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			sortData.add(new java.lang.Double(data[x]));
 		}
 		
-		quickSort(sortData,0);
+		long startTime = System.currentTimeMillis();
+		//quickSort(sortData,0);
 		//selectionSort(sortData);
-		//bubbleSort(sortData);
+		bubbleSort(sortData);
 		//shakerSort(sortData);
+		long endTime = System.currentTimeMillis();
+		System.out.println((endTime-startTime)/1000.0 +" s");
 
 	}
 	
@@ -150,6 +154,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		}
 		lower = quickSort(lower,segmentStartIndex);
 		higher = quickSort(higher,segmentStartIndex+pivotIndex+1);
+		complete=false;
 		sortData.set(pivotIndex, pivot);
 		for(int i = 0; i < lower.size(); i++){
 			sortData.set(i,lower.get(i));
@@ -167,6 +172,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			
 			e.printStackTrace();
 		}
+		complete=true;
 		return sortData;
 	}
 	
