@@ -19,7 +19,9 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 	static ArrayList<Rectangle2D.Double> dataBars;
 	Rectangle2D.Double workingData;
 	public boolean complete = false;
-
+	public int sleepTime = 1;
+	
+	
 	public VisualSort() {
 		JFrame frame = new JFrame("Visualized data sorting");
 		frame.setVisible(true);
@@ -29,7 +31,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 
 		workingData=null;
 		dataBars = new ArrayList<Rectangle2D.Double>();
-		data = new double[1000];
+		data = new double[10000];
 		for(int x  = 0; x < data.length; x++){
 			data[x]=Math.random();
 		}
@@ -77,7 +79,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			dataBars.add(new Rectangle2D.Double(i*(800.0/data.length), 0, 800.0/data.length, 800.0*data[i]));
 			repaint();
 			try {
-				Thread.sleep(1);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
@@ -127,11 +129,11 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 				}
 			}
 			for(int x = 0; x < sortData.size(); x++){
-				dataBars.get(x).setRect((x+segmentStartIndex)*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(x));
+				dataBars.get(x+segmentStartIndex).setRect((x+segmentStartIndex)*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(x));
 			}
 			repaint();
 			try {
-				Thread.sleep(1);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
@@ -148,6 +150,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 		}
 		lower = quickSort(lower,segmentStartIndex);
 		higher = quickSort(higher,segmentStartIndex+pivotIndex+1);
+		sortData.set(pivotIndex, pivot);
 		for(int i = 0; i < lower.size(); i++){
 			sortData.set(i,lower.get(i));
 		}
@@ -155,11 +158,11 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			sortData.set(pivotIndex+1+i,higher.get(i));
 		}
 		for(int x = 0; x < sortData.size(); x++){
-			dataBars.get(x).setRect((x+segmentStartIndex)*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(x));
+			dataBars.get(x+segmentStartIndex).setRect((x+segmentStartIndex)*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(x));
 		}
 		repaint();
 		try {
-			Thread.sleep(1);
+			Thread.sleep(sleepTime);
 		} catch (InterruptedException e) {
 			
 			e.printStackTrace();
@@ -192,7 +195,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			}
 			repaint();
 			try {
-				Thread.sleep(5);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
@@ -231,7 +234,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			}
 			repaint();
 			try {
-				Thread.sleep(5);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
@@ -269,7 +272,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			}
 			repaint();
 			try {
-				Thread.sleep(5);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
@@ -294,7 +297,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			}
 			repaint();
 			try {
-				Thread.sleep(5);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
