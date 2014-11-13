@@ -29,7 +29,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 
 		workingData=null;
 		dataBars = new ArrayList<Rectangle2D.Double>();
-		data = new double[10000];
+		data = new double[1000];
 		for(int x  = 0; x < data.length; x++){
 			data[x]=Math.random();
 		}
@@ -79,7 +79,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 			i++;
@@ -90,16 +90,19 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			sortData.add(new java.lang.Double(data[x]));
 		}
 		
-		quickSort(sortData);
+		quickSort(sortData,0);
 		//selectionSort(sortData);
 		//bubbleSort(sortData);
 		//shakerSort(sortData);
 
 	}
 	
-	public void quickSort(ArrayList<java.lang.Double> sortData){
+	public ArrayList<java.lang.Double> quickSort(ArrayList<java.lang.Double> sortData, int segmentStartIndex){
 
 		complete = false;
+		if(sortData.size()<1){
+			return sortData;
+		}
 		int pivotIndex=sortData.size()-1;
 		java.lang.Double pivot = sortData.get(pivotIndex);
 		/*
@@ -124,16 +127,44 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 				}
 			}
 			for(int x = 0; x < sortData.size(); x++){
-				dataBars.get(x).setRect(x*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(x));
+				dataBars.get(x).setRect((x+segmentStartIndex)*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(x));
 			}
 			repaint();
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
+		
+		ArrayList<java.lang.Double> lower = new ArrayList<java.lang.Double>();
+		ArrayList<java.lang.Double> higher = new ArrayList<java.lang.Double>();
+		for(int i = 0; i < pivotIndex; i++){
+			lower.add(sortData.get(i));
+		}
+		for(int i = pivotIndex+1; i <sortData.size(); i++){
+			higher.add(sortData.get(i));
+		}
+		lower = quickSort(lower,segmentStartIndex);
+		higher = quickSort(higher,segmentStartIndex+pivotIndex+1);
+		for(int i = 0; i < lower.size(); i++){
+			sortData.set(i,lower.get(i));
+		}
+		for(int i = 0; i <higher.size(); i++){
+			sortData.set(pivotIndex+1+i,higher.get(i));
+		}
+		for(int x = 0; x < sortData.size(); x++){
+			dataBars.get(x).setRect((x+segmentStartIndex)*(800.0/data.length), 0, 800.0/data.length, 800.0*sortData.get(x));
+		}
+		repaint();
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
+		return sortData;
 	}
 	
 	public void selectionSort(ArrayList<java.lang.Double> sortData){
@@ -163,7 +194,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		endOfSort++;
@@ -202,7 +233,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
@@ -240,7 +271,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 			for(int i = sortedright;i > sortedleft; i--){
@@ -265,7 +296,7 @@ public class VisualSort extends JPanel implements ActionListener,Runnable {
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 		}
